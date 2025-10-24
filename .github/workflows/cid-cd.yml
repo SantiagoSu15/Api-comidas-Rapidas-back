@@ -2,8 +2,8 @@ name: CI/CD - FastFood API
 on:
   push:
     branches: [ "main" ]    # esto cuando se haga push  en main
-    pull_request:
-      branches: [ "main" ]   # tmb cuando hacen pr
+  pull_request:
+    branches: [ "main" ]   # tmb cuando hacen pr
 
 jobs:
   build:
