@@ -1,0 +1,55 @@
+name: CI/CD - FastFood API
+on:
+  push:
+    branches: [ "main" ]    # esto cuando se haga push  en main
+    pull_request:
+      branches: [ "main" ]   # tmb cuando hacen pr
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4  # clonar repo
+
+
+      # configurar Java
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+            distribution: 'temurin'
+            java-version: '21'
+            cache: 'maven'
+
+
+      # compila y tmb las pruebas
+      - name: Build and test
+        run: mvn clean verify
+
+      # reporte del jacoco
+      - name: Generate JaCoCo report
+        run: mvn jacoco:report
+
+#      - name: SonarCloud Scan
+#        uses: SonarSource/sonarcloud-github-action@v2
+#        env:
+#            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        with:
+#            args: >
+#              -Dsonar.projectKey=tu_usuario_tuRepo
+#              -Dsonar.organization=tu_organizacion
+#              -Dsonar.host.url=https://sonarcloud.io
+
+         # Empaquetar artefacto
+      - name: Package app
+        run: mvn package -DskipTests=true
+
+        #Subirlo (para descargar en git)
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+            name: fastfood-api
+            path: target/*.jar
+
